@@ -11,6 +11,7 @@ def home_page_view(request, *args, **kwargs):
     page_qs = PageVisit.objects.filter(path=request.path) # Filter for objects with path
     
     my_title = "My Page"
+    html_template = "home.html" # Set template
     my_context = {
         "page_title": my_title,
         "page_visit_count": page_qs.count(), # Count all page visit rows that are in query set
@@ -18,8 +19,6 @@ def home_page_view(request, *args, **kwargs):
         "percent": (page_qs.count() * 100.0) / queryset.count(),
     }
     path = request.path
-    print("path", path)
-    html_template = "home.html" # Set template
     PageVisit.objects.create(path = request.path) # Create a page visit
     return render(request, html_template, my_context)  # Return response to server
 
