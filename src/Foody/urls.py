@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import home_page_view
+from .views import home_page_view, login_page_view, signup_page_view
 
 # Path appeneded to url, page view
 urlpatterns = [
-    path("", home_page_view), # Index page - path is ""
-    path("hello-world/", home_page_view),
+    path("", login_page_view, name="login"), # Index page - path is ""
+    path("signup/", signup_page_view, name="signup"),
+    path("hello-world/", home_page_view, name="home"),
     path("admin/", admin.site.urls),
 ]
