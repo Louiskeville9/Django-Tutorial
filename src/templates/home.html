@@ -4,37 +4,39 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block head_title %}
-                Log In
-                {% endblock head_title %}
-        </title>
+        <title>{% block head_title %}Home - Foody{% endblock head_title %}</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <!-- Bootstrap Icons (for the little icons on the tiles/buttons) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="{% static 'myapp/css/styles.css' %}">
+        <style>
+            /* Small dashboard helpers - prototype only */
+            .stat-card { border-left: 4px solid #fc8902; }
+            .stat-number { font-size: 2rem; font-weight: 700; line-height: 1; }
+            .stat-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+            .accent { color: #fc8902; }
+            .btn-accent { background-color: #fc8902; border-color: #fc8902; color: #fff; }
+            .btn-accent:hover { background-color: #e07a00; border-color: #e07a00; color: #fff; }
+        </style>
     </head>
 
     <body>
         <div id="HomeHeader">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container-fluid">
-                        <a class="navbar-brand d-flex allign-items-center gap-2" href="#">
-                            <img class="logo" src="{% static 'images/foody-pixel-grocery-bag-bg.png' %}" alt="Foody Logo">
-                            <b class="brand-text">FOODY</b>
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <a class="navbar-brand d-flex allign-items-center gap-2" href="#">
+                        <img class="logo" src="{% static 'images/foody-pixel-grocery-bag-bg.png' %}" alt="Foody Logo">
+                        <b class="brand-text">FOODY</b>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">My Household</a>
-                                </li>
-                                <li class="nav-item">
-                                <a class="nav-link" href="#">Recipes</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Quick Access
-                                </a>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">My Household</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quick Access</a>
                                 <ul class="dropdown-menu dropdown-menu-dark navbar-dropdown">
                                     <li><a class="dropdown-item" href="#">View Pantry</a></li>
                                     <li><a class="dropdown-item" href="#">Scan Receipt</a></li>
@@ -42,66 +44,174 @@
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="#">Settings</a></li>
                                 </ul>
-                                </li>
-                                <li class="nav-item">
-                                <a class="nav-link" aria-disabled="true">About</a>
-                                </li>
-                            </ul>
-                            <form class="d-flex" role="search">
-                                <input class="form-control me-2" type="search" placeholder="Find..." aria-label="Search"/>
-                                <button class="btn btn-outline-success" type="submit">Go</button>
-                            </form>
-                        </div>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" aria-disabled="true">About</a></li>
+                        </ul>
+                        <form class="d-flex" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Find..." aria-label="Search"/>
+                            <button class="btn btn-outline-success" type="submit">Go</button>
+                        </form>
                     </div>
-                </nav>
+                </div>
+            </nav>
         </div>
 
         <main class="container py-4">
-            <!-- Page heading -->
-            <div class="row mb-4">
+            <!-- Page heading + primary action -->
+            <div class="row mb-4 align-items-center">
                 <div class="col">
                     {% if user.is_authenticated %}
                     <h1 class="h3 mb-1">Welcome {{ user.username }}</h1>
                     {% else %}
-                    <h1 class="h3-mb-1">User Not Authenticated</h1>
+                    <h1 class="h3 mb-1">Welcome</h1>
                     {% endif %}
-                    <p class="text-muted mb-0">Welcome to Foody. Start saving moeny and reducing waste!</p>
+                    <p class="text-muted mb-0">Here's what's happening in your kitchen today.</p>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-accent"><i class="bi bi-camera"></i> Scan receipt</button>
                 </div>
             </div>
 
-            <!-- Content blocks -->
-            <div class="row g-4">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm">
+            <!-- KPI stat tiles -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card h-100 shadow-sm">
                         <div class="card-body">
-                            <h2 class="h5 card-title">Pantry</h2>
-                            <p class="card-text">Items you have at home.</p>
+                            <div class="stat-label text-muted">Pantry items</div>
+                            <div class="stat-number">42</div>
+                            <div class="small text-muted">across 6 categories</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-muted">Expiring this week</div>
+                            <div class="stat-number text-danger">5</div>
+                            <div class="small text-muted">use these first</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-muted">Shopping list</div>
+                            <div class="stat-number">8</div>
+                            <div class="small text-muted">items to buy</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-muted">Saved this month</div>
+                            <div class="stat-number text-success">€23</div>
+                            <div class="small text-muted">less waste</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main dashboard grid -->
+            <div class="row g-4">
+                <!-- Left column -->
+                <div class="col-12 col-lg-8">
+                    <!-- Expiring soon -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-clock-history accent"></i> Expiring soon</span>
+                            <a href="#" class="small text-decoration-none">View all</a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Chicken fillets <span class="text-muted small">· 400g</span></span>
+                                <span class="badge text-bg-danger rounded-pill">1 day</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Natural yoghurt <span class="text-muted small">· 500g</span></span>
+                                <span class="badge text-bg-warning rounded-pill">2 days</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Spinach <span class="text-muted small">· 1 bag</span></span>
+                                <span class="badge text-bg-warning rounded-pill">3 days</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Cheddar <span class="text-muted small">· 200g</span></span>
+                                <span class="badge text-bg-success rounded-pill">5 days</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Recipe suggestions -->
+                    <div class="card shadow-sm">
+                        <div class="card-header"><i class="bi bi-egg-fried accent"></i> Use-it-up recipes</div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-sm-4">
+                                    <div class="border rounded p-3 h-100">
+                                        <h3 class="h6 mb-1">Chicken & spinach pasta</h3>
+                                        <p class="small text-muted mb-0">Uses 3 expiring items</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="border rounded p-3 h-100">
+                                        <h3 class="h6 mb-1">Yoghurt flatbreads</h3>
+                                        <p class="small text-muted mb-0">Uses 1 expiring item</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="border rounded p-3 h-100">
+                                        <h3 class="h6 mb-1">Cheesy spinach bake</h3>
+                                        <p class="small text-muted mb-0">Uses 2 expiring items</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">Expiring soon</h2>
-                        <p class="card-text">Items to use first.</p>
+                <!-- Right column -->
+                <div class="col-12 col-lg-4">
+                    <!-- Quick actions -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">Quick actions</div>
+                        <div class="card-body d-grid gap-2">
+                            <button class="btn btn-accent"><i class="bi bi-camera"></i> Scan a receipt</button>
+                            <button class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i> Add item manually</button>
+                            <button class="btn btn-outline-secondary"><i class="bi bi-cart"></i> New shopping list</button>
+                        </div>
+                    </div>
+
+                    <!-- Shopping list preview -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Shopping list</span>
+                            <span class="badge text-bg-secondary rounded-pill">8</span>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Milk</li>
+                            <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Eggs</li>
+                            <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Bread</li>
+                            <li class="list-group-item"><input class="form-check-input me-2" type="checkbox"> Tomatoes</li>
+                        </ul>
+                    </div>
+
+                    <!-- Household -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">My household</div>
+                        <div class="card-body">
+                            <p class="small text-muted mb-2">3 members</p>
+                            <div class="d-flex gap-2">
+                                <span class="badge rounded-circle text-bg-dark p-2">LK</span>
+                                <span class="badge rounded-circle text-bg-secondary p-2">AM</span>
+                                <span class="badge rounded-circle text-bg-secondary p-2">JD</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">Upload receipt</h2>
-                        <p class="card-text">Add a new shopping trip.</p>
-                    </div>
-                </div>
-            </div>
-
             </div>
         </main>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
     </body>
 </html>
